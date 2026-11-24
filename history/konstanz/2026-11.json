@@ -9022,6 +9022,22 @@
     {
       "timestamp": "2026-11-24T12:15:00Z",
       "value_cm": 276
+    },
+    {
+      "timestamp": "2026-11-24T12:30:00Z",
+      "value_cm": 274
+    },
+    {
+      "timestamp": "2026-11-24T12:45:00Z",
+      "value_cm": 274
+    },
+    {
+      "timestamp": "2026-11-24T13:00:00Z",
+      "value_cm": 274
+    },
+    {
+      "timestamp": "2026-11-24T13:15:00Z",
+      "value_cm": 276
     }
   ]
 }
