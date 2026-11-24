@@ -1,0 +1,120 @@
+# Stündlich: Messwerte Pegel Konstanz holen (PEGELONLINE), nur bei neuen Daten hier committen,
+# dann die Website bauen und per Direct Upload auf Cloudflare Pages veröffentlichen.
+#
+# Der Code der Website liegt in einem privaten Repo; beide Jobs holen ihn per Deploy-Key (nur
+# Lesen). Dieses Repo ist öffentlich, damit die Actions-Minuten nichts kosten.
+# Ausgelöst stündlich von einem Cloudflare-Worker (workflow_dispatch), weil GitHub Zeitpläne stark
+# drosselt; `schedule` bleibt als Rückfallebene. Bewusst keine Auslöser durch Pull Requests,
+# Issues oder Pushes: Secrets bekommen nur diese beiden Auslöser auf main.
+#
+# Secrets: CODE_DEPLOY_KEY (Repo, SSH-Deploy-Key, nur Lesen auf das Code-Repo),
+#          CLOUDFLARE_API_TOKEN und CLOUDFLARE_ACCOUNT_ID (nur Umgebung „produktion“, nur main).
+name: update
+
+on:
+  schedule:
+    # Krumme Minute statt voller Stunde: zu vollen Zeiten drosselt GitHub Zeitpläne am stärksten.
+    - cron: '34 * * * *'
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Auch ohne neuen Messwert bauen und veröffentlichen'
+        type: boolean
+        default: false
+
+# Standard: keine Rechte; jeder Job bekommt nur, was er braucht.
+permissions: {}
+
+# Nie zwei Läufe gleichzeitig (sonst Push-Konflikte im Datenarchiv).
+concurrency:
+  group: daten
+  cancel-in-progress: false
+
+jobs:
+  daten:
+    # Nur auf main (Schreibrecht + Deploy-Key); `deploy` ist über die Umgebung ebenfalls auf main begrenzt.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    outputs:
+      neu: ${{ steps.commit.outputs.neu }}
+    steps:
+      - name: Code der Website holen (privates Repo, nur Lesen)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: kaisiegfried-lab/bodensee-pegel
+          ref: main
+          ssh-key: ${{ secrets.CODE_DEPLOY_KEY }}
+          persist-credentials: false
+      - name: Daten holen (dieses Repo)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: data/pegel
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      # fetch-live braucht nur Node selbst (kein npm ci, also kein Fremdcode mit Schreibrecht).
+      - name: Messwerte holen
+        run: npm run fetch-live
+      - name: Nur bei neuen Daten committen
+        id: commit
+        working-directory: data/pegel
+        run: |
+          # Nur diese Pfade schreibt fetch-live; Prüfung und Commit nutzen dieselben.
+          PFADE="live history"
+          if [ -z "$(git status --porcelain -- $PFADE)" ]; then
+            echo "Keine neuen Messwerte."
+            echo "neu=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- $PFADE
+          git commit -m "Daten: Pegel Konstanz"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo "neu=true" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: daten
+    if: needs.daten.outputs.neu == 'true' || inputs.deploy == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: produktion
+    permissions:
+      contents: read
+    steps:
+      - name: Code der Website holen (privates Repo, nur Lesen)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: kaisiegfried-lab/bodensee-pegel
+          ref: main
+          ssh-key: ${{ secrets.CODE_DEPLOY_KEY }}
+          persist-credentials: false
+      - name: Daten holen (dieses Repo, neuester Stand)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          path: data/pegel
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # Zusatzwert nur für den Build, nie committet; Ausgabe unterdrückt (Logs sind öffentlich).
+      # Ein Ausfall darf die Veröffentlichung nicht stoppen.
+      - name: Zusatzdaten holen
+        continue-on-error: true
+        run: npm run --silent fetch-hvz > /dev/null 2>&1
+      - run: npm run build
+      - name: SEO-Prüfung des Builds
+        run: npm run check:seo
+      - name: Veröffentlichen (Cloudflare Pages, Direct Upload)
+        run: npx wrangler pages deploy dist --project-name=bodensee-pegel --branch=main --commit-dirty=true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_SEND_METRICS: 'false'
