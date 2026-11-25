@@ -2,18 +2,10 @@
   "station": "Konstanz",
   "value_cm": 276,
   "value_m_nhn": 394.65,
-  "timestamp": "2026-11-25T05:30:00Z",
-  "trend_6h_cm": 0,
+  "timestamp": "2026-11-25T05:45:00Z",
+  "trend_6h_cm": 1,
   "trend_24h_cm": 0,
   "series_24h": [
-    {
-      "timestamp": "2026-11-24T05:45:00Z",
-      "value_cm": 276
-    },
-    {
-      "timestamp": "2026-11-24T06:00:00Z",
-      "value_cm": 276
-    },
     {
       "timestamp": "2026-11-24T06:15:00Z",
       "value_cm": 276
@@ -389,8 +381,12 @@
     {
       "timestamp": "2026-11-25T05:30:00Z",
       "value_cm": 276
+    },
+    {
+      "timestamp": "2026-11-25T05:45:00Z",
+      "value_cm": 276
     }
   ],
-  "fetched_at": "2026-11-25T05:38:24.100Z",
+  "fetched_at": "2026-11-25T06:03:27.932Z",
   "source": "PEGELONLINE (WSV), ungeprüfte Rohdaten, DL-DE-Zero 2.0"
 }
