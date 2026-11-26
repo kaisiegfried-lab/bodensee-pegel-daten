@@ -9750,6 +9750,22 @@
     {
       "timestamp": "2026-11-26T09:45:00Z",
       "value_cm": 275
+    },
+    {
+      "timestamp": "2026-11-26T10:00:00Z",
+      "value_cm": 275
+    },
+    {
+      "timestamp": "2026-11-26T10:15:00Z",
+      "value_cm": 275
+    },
+    {
+      "timestamp": "2026-11-26T10:30:00Z",
+      "value_cm": 275
+    },
+    {
+      "timestamp": "2026-11-26T10:45:00Z",
+      "value_cm": 275
     }
   ]
 }
