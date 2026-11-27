@@ -7,10 +7,6 @@
   "trend_24h_cm": 1,
   "series_24h": [
     {
-      "timestamp": "2026-11-26T13:00:00Z",
-      "value_cm": 275
-    },
-    {
       "timestamp": "2026-11-26T13:15:00Z",
       "value_cm": 275
     },
@@ -391,6 +387,6 @@
       "value_cm": 276
     }
   ],
-  "fetched_at": "2026-11-27T13:00:28.313Z",
+  "fetched_at": "2026-11-27T13:03:24.458Z",
   "source": "PEGELONLINE (WSV), ungeprüfte Rohdaten, DL-DE-Zero 2.0"
 }
