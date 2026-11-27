@@ -10214,6 +10214,22 @@
     {
       "timestamp": "2026-11-27T14:45:00Z",
       "value_cm": 276
+    },
+    {
+      "timestamp": "2026-11-27T15:00:00Z",
+      "value_cm": 275
+    },
+    {
+      "timestamp": "2026-11-27T15:15:00Z",
+      "value_cm": 276
+    },
+    {
+      "timestamp": "2026-11-27T15:30:00Z",
+      "value_cm": 276
+    },
+    {
+      "timestamp": "2026-11-27T15:45:00Z",
+      "value_cm": 275
     }
   ]
 }
