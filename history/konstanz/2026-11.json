@@ -10502,6 +10502,22 @@
     {
       "timestamp": "2026-11-28T08:45:00Z",
       "value_cm": 277
+    },
+    {
+      "timestamp": "2026-11-28T09:00:00Z",
+      "value_cm": 276
+    },
+    {
+      "timestamp": "2026-11-28T09:15:00Z",
+      "value_cm": 276
+    },
+    {
+      "timestamp": "2026-11-28T09:30:00Z",
+      "value_cm": 276
+    },
+    {
+      "timestamp": "2026-11-28T09:45:00Z",
+      "value_cm": 277
     }
   ]
 }
