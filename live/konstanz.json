@@ -2,7 +2,7 @@
   "station": "Konstanz",
   "value_cm": 276,
   "value_m_nhn": 394.65,
-  "timestamp": "2026-11-28T03:45:00Z",
+  "timestamp": "2026-11-28T04:00:00Z",
   "trend_6h_cm": 0,
   "trend_24h_cm": 0,
   "series_24h": [
@@ -385,8 +385,12 @@
     {
       "timestamp": "2026-11-28T03:45:00Z",
       "value_cm": 276
+    },
+    {
+      "timestamp": "2026-11-28T04:00:00Z",
+      "value_cm": 276
     }
   ],
-  "fetched_at": "2026-11-28T04:03:22.029Z",
+  "fetched_at": "2026-11-28T04:10:06.730Z",
   "source": "PEGELONLINE (WSV), ungeprüfte Rohdaten, DL-DE-Zero 2.0"
 }
